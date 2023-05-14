@@ -1,5 +1,4 @@
-interface Counter {
+interface GrowingCounter {
     fun inc()
-    fun dec()
     fun get(): Int
 }
