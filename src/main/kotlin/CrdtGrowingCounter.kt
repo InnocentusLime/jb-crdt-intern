@@ -1,10 +1,3 @@
-import kotlin.math.max
-
-interface CrdtCounterChannel {
-    fun pollState(): Array<Int>
-    fun broadCastSate(state: Array<Int>)
-}
-
 class CrdtGrowingCounter(
     channel: CrdtCounterChannel,
     processCount: Int,
@@ -28,9 +21,8 @@ class CrdtGrowingCounter(
 
     override fun receiveAndMergeState() {
         val otherState = myChannel.pollState()
-
-        for (idx in 0..otherState.size) {
-            myState[idx] = max(myState[idx], otherState[idx])
+        if (otherState != null) {
+            mergeCounterStates(myState, otherState)
         }
     }
 }
