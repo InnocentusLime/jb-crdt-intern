@@ -28,4 +28,8 @@ class CrdtCompleteCounter(
         growingD.receiveAndMergeState()
         growingI.receiveAndMergeState()
     }
+
+    fun hasPendingMessages(): Boolean {
+        return growingI.hasPendingMessages() || growingD.hasPendingMessages()
+    }
 }

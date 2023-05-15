@@ -25,4 +25,8 @@ class CrdtGrowingCounter(
             mergeCounterStates(myState, otherState)
         }
     }
+
+    fun hasPendingMessages(): Boolean {
+        return myChannel.isEmpty()
+    }
 }
