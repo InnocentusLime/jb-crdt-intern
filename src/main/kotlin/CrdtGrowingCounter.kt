@@ -19,14 +19,15 @@ class CrdtGrowingCounter(
         myChannel.broadCastSate(myState.clone())
     }
 
-    override fun receiveAndMergeState() {
+    override fun pollAndMergeState(): Boolean {
         val otherState = myChannel.pollState()
         if (otherState != null) {
+            val hasChanged = !myState.contentEquals(otherState)
             mergeCounterStates(myState, otherState)
-        }
-    }
 
-    fun hasPendingMessages(): Boolean {
-        return myChannel.isEmpty()
+            return hasChanged
+        }
+
+        return true
     }
 }

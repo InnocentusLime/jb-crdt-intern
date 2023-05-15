@@ -24,12 +24,10 @@ class CrdtCompleteCounter(
         growingI.broadcastState()
     }
 
-    override fun receiveAndMergeState() {
-        growingD.receiveAndMergeState()
-        growingI.receiveAndMergeState()
-    }
+    override fun pollAndMergeState(): Boolean {
+        val b1 = growingD.pollAndMergeState()
+        val b2 = growingI.pollAndMergeState()
 
-    fun hasPendingMessages(): Boolean {
-        return growingI.hasPendingMessages() || growingD.hasPendingMessages()
+        return b1 || b2
     }
 }

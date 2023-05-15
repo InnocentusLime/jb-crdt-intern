@@ -1,5 +1,5 @@
 interface DistributedObject {
     fun broadcastState()
 
-    fun receiveAndMergeState()
+    fun pollAndMergeState(): Boolean
 }

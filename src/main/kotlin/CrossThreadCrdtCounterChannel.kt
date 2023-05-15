@@ -14,8 +14,4 @@ class CrossThreadCrdtCounterChannel(
     override fun pollState(): Array<Int>? {
         return myRecv.poll()
     }
-
-    override fun isEmpty(): Boolean {
-        return myRecv.isEmpty()
-    }
 }

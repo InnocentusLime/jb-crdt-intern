@@ -41,7 +41,7 @@ class SingleThreaded {
 
         // It broadcasts its state and count 2 fetches it
         count1.broadcastState()
-        count2.receiveAndMergeState()
+        count2.pollAndMergeState()
 
         // count 2 is now supposed to have the same value
         assertEquals(count1.get(), count2.get())
@@ -57,7 +57,7 @@ class SingleThreaded {
 
         // It broadcasts its state and count 2 fetches it
         count1.broadcastState()
-        count2.receiveAndMergeState()
+        count2.pollAndMergeState()
 
         // Then let's assume that the connection dies and both counters do some work
         count1.inc()
@@ -66,8 +66,8 @@ class SingleThreaded {
         // Now the counters exchange with their states
         count1.broadcastState()
         count2.broadcastState()
-        count1.receiveAndMergeState()
-        count2.receiveAndMergeState()
+        count1.pollAndMergeState()
+        count2.pollAndMergeState()
 
         // Their states must be both 2
         assertEquals(2, count1.get())

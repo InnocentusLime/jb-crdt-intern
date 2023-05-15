@@ -17,11 +17,11 @@ class Concurrent {
 
                 if (x % 5 == 0) {
                     count1.broadcastState()
-                    count1.receiveAndMergeState()
+                    count1.pollAndMergeState()
                 }
             }
 
-            for (x in 0..100) { count1.receiveAndMergeState() }
+            for (x in 0..100) { count1.pollAndMergeState() }
         }
 
         val t2 = thread {
@@ -30,11 +30,11 @@ class Concurrent {
 
                 if (x % 20 == 0) {
                     count2.broadcastState()
-                    count2.receiveAndMergeState()
+                    count2.pollAndMergeState()
                 }
             }
 
-            for (x in 0..100) { count2.receiveAndMergeState() }
+            for (x in 0..100) { count2.pollAndMergeState() }
         }
 
         // Wait for both threads to finish
@@ -60,7 +60,7 @@ class Concurrent {
 
                 if (x % 5 == 0) {
                     count1.broadcastState()
-                    count1.receiveAndMergeState()
+                    count1.pollAndMergeState()
                 }
 
                 if (x % 10 == 0) {
@@ -72,9 +72,11 @@ class Concurrent {
                 }
             }
 
-            while (count1.get() != 0 || count1.hasPendingMessages()) {
+            while (count1.get() != 0) {
                 count1.broadcastState()
-                count1.receiveAndMergeState()
+                if (!count1.pollAndMergeState()) {
+                    break
+                }
             }
         }
 
@@ -84,19 +86,26 @@ class Concurrent {
 
                 if (x % 20 == 0) {
                     count2.broadcastState()
-                    count2.receiveAndMergeState()
+                    count2.pollAndMergeState()
+                }
+
+                // Wait
+                while (lock.isLocked) {
+                    /* NOOP */
                 }
             }
 
-            while (count2.get() != 0 || count2.hasPendingMessages()) {
+            while (count2.get() != 0) {
                 count2.broadcastState()
-                count2.receiveAndMergeState()
+                if (!count2.pollAndMergeState()) {
+                    break
+                }
             }
         }
 
         // Wait for both threads to finish
-        t1.join(10000)
-        t2.join(10000)
+        t1.join(0)
+        t2.join(0)
     }
 
     private fun setupCounters(): Pair<CrdtCompleteCounter, CrdtCompleteCounter> {
