@@ -71,6 +71,7 @@ class Concurrent {
                     }
                 }
             }
+            lock.unlock()
 
             while (count1.get() != 0) {
                 count1.broadcastState()
